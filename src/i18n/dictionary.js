@@ -123,7 +123,7 @@ export const dictionary = {
     "form.sending": "Enviando…",
     "form.ok": "¡Gracias! Te responderemos muy pronto.",
     "form.err": "Revisa los campos marcados.",
-    "form.errNetwork": "No se pudo enviar. Intenta de nuevo o escríbenos a hola@vortexmedialab.mx.",
+    "form.errNetwork": "No se pudo enviar. Intenta de nuevo o escríbenos a info@vortexmedialab.mx.",
 
     "footer.tag": "Creatividad que mueve marcas. Hecho en CDMX.",
     "footer.top": "Volver arriba ↑",
@@ -252,7 +252,7 @@ export const dictionary = {
     "form.sending": "Sending…",
     "form.ok": "Thanks! We'll get back to you very soon.",
     "form.err": "Please check the highlighted fields.",
-    "form.errNetwork": "Couldn't send it. Please try again or email us at hola@vortexmedialab.mx.",
+    "form.errNetwork": "Couldn't send it. Please try again or email us at info@vortexmedialab.mx.",
 
     "footer.tag": "Creativity that moves brands. Made in CDMX.",
     "footer.top": "Back to top ↑",

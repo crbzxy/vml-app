@@ -81,31 +81,79 @@ export default function Contact() {
             </span>
           </h2>
           <div className="contact__details reveal">
-            <a href="mailto:hola@vortexmedialab.mx" className="contact__email" data-cursor="copy">
-              hola@vortexmedialab.mx
+            <a href="mailto:info@vortexmedialab.mx" className="contact__email" data-cursor="copy">
+              info@vortexmedialab.mx
             </a>
             <p className="contact__loc">{t("contact.loc")}</p>
             <div className="contact__socials">
-              <a href="#" aria-label="Instagram" data-cursor="link">
+              <a
+                href="https://www.facebook.com/vortexmedialabmx/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                data-cursor="link"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                  <path
+                    d="M13.5 21v-6.7h2.2l.3-2.6h-2.5V9.9c0-.75.2-1.27 1.29-1.27h1.38V6.3c-.24-.03-1.05-.1-2-.1-1.98 0-3.33 1.2-3.33 3.42v1.9H8.5v2.6h2.3V21"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/vortex-media-lab/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                data-cursor="link"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                  <path
+                    d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/vortexmedialab/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                data-cursor="link"
+              >
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                   <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
                   <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
                   <circle cx="17.5" cy="6.5" r="1.3" fill="currentColor" />
                 </svg>
               </a>
-              <a href="#" aria-label="Vimeo" data-cursor="link">
+              <a
+                href="https://www.tiktok.com/@vortexmedialab"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                data-cursor="link"
+              >
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                   <path
-                    d="M22 7.4c-.1 2.2-1.6 5.1-4.5 8.9C14.4 20.3 11.9 22 9.9 22c-1.3 0-2.3-1.2-3.2-3.5L5 11.9c-.6-2.3-1.3-3.5-2-3.5-.2 0-.7.3-1.6.9L0 8.1c1.1-1 2.2-2 3.3-3C4.7 3.9 5.8 3.3 6.5 3.2c1.7-.2 2.8 1 3.2 3.6.5 2.8.8 4.5 1 5.2.5 2.3 1 3.4 1.6 3.4.5 0 1.2-.7 2.1-2.2.9-1.5 1.4-2.6 1.5-3.4.2-1.5-.4-2.3-1.6-2.3-.6 0-1.2.1-1.8.4 1.2-3.9 3.4-5.8 6.7-5.7 2.4.1 3.6 1.7 3.5 4.8z"
-                    fill="currentColor"
+                    d="M14 3v10.6a2.9 2.9 0 11-2.4-2.86"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
-                </svg>
-              </a>
-              <a href="#" aria-label="LinkedIn" data-cursor="link">
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
                   <path
-                    d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4"
+                    d="M14 3c.3 2.1 1.8 3.7 4 4"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.6"

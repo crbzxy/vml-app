@@ -86,9 +86,16 @@ Sitio nuevo o ya conectado al repo:
 - **Publish directory:** `dist`
 - La config ya está en `netlify.toml`, así que un despliegue nuevo la toma automáticamente.
 
+## Datos reales tomados de vortexmedialab.mx (sitio actual en producción)
+
+- Redes sociales en `Contact.jsx`: Facebook, LinkedIn, Instagram y TikTok, con las URLs
+  reales de la cuenta (el avance de diseño traía Instagram/Vimeo/LinkedIn como
+  placeholder — Vimeo no existe en la marca real, se sustituyó por Facebook + TikTok).
+- Correo público mostrado en la sección de contacto: `info@vortexmedialab.mx` (el avance
+  traía `hola@vortexmedialab.mx` como placeholder).
+
 ## Pendientes de contenido (heredados del avance de diseño)
 
-- [ ] Enlaces reales de redes sociales en el footer/contacto (están en `href="#"`).
 - [ ] `public/assets/img/og-cover.jpg` (1200×630) para la vista previa al compartir en
       redes — falta el archivo, el `<meta property="og:image">` ya apunta ahí.
 - [ ] Carruseles de portafolio pendientes de imágenes: `pulso`, `salvora`, `cobalto`
