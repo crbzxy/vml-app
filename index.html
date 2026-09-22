@@ -40,26 +40,6 @@
     </script>
   </head>
   <body data-lang="es">
-    <!--
-      Réplica estática del formulario de contacto, solo para que Netlify la
-      detecte en el build (dist/index.html) y habilite Netlify Forms.
-      El formulario real que ve el visitante lo renderiza React en
-      src/components/Contact.jsx y se envía por fetch a "/" con estos
-      mismos campos. No borrar: si se quita, Netlify deja de recibir envíos.
-    -->
-    <form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <select name="type">
-        <option value="design">Diseño / Branding</option>
-        <option value="av">Producción audiovisual</option>
-        <option value="event">Evento / Activación</option>
-        <option value="other">Otro / No estoy seguro</option>
-      </select>
-      <textarea name="message"></textarea>
-      <input type="text" name="bot-field" />
-    </form>
-
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

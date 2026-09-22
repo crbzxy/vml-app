@@ -5,12 +5,6 @@ import VortexMark from "./icons/VortexMark";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function encodeForNetlify(data) {
-  return Object.keys(data)
-    .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(data[k])}`)
-    .join("&");
-}
-
 const INITIAL = { name: "", email: "", type: "design", message: "", "bot-field": "" };
 
 const SOCIALS = [
@@ -116,14 +110,20 @@ export default function Contact() {
 
     setStatus("sending");
     try {
-      const res = await fetch("/", {
+      const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encodeForNetlify({ "form-name": "contact", ...fields }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fields.name.trim(),
+          email: fields.email.trim(),
+          type: fields.type,
+          message: fields.message.trim(),
+          "bot-field": fields["bot-field"],
+        }),
       });
-      if (!res.ok) throw new Error(`Netlify Forms respondió ${res.status}`);
+      if (!res.ok) throw new Error(`Contact API respondió ${res.status}`);
       setStatus("ok");
-      trackEvent("generate_lead", { method: "netlify_forms", project_type: fields.type });
+      trackEvent("generate_lead", { method: "resend", project_type: fields.type });
       setFields(INITIAL);
     } catch {
       setStatus("networkError");
@@ -198,16 +198,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <form
-          className="contact__form reveal"
-          name="contact"
-          method="POST"
-          data-netlify="true"
-          data-netlify-honeypot="bot-field"
-          noValidate
-          onSubmit={onSubmit}
-        >
-          <input type="hidden" name="form-name" value="contact" />
+        <form className="contact__form reveal" name="contact" noValidate onSubmit={onSubmit}>
           <p hidden>
             <label>
               No llenar: <input name="bot-field" value={fields["bot-field"]} onChange={onChange} />
