@@ -1,5 +1,3 @@
-import { Resend } from "resend";
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TYPE_LABELS = {
   design: "Diseño / Branding",
@@ -15,12 +13,23 @@ const OXFORD = "#031F35";
 const GREEN = "#7FED3E";
 const HONEY = "#E2EADB";
 const INK_DIM = "#9fb0b8";
+const FALLBACK_BCC = "carlos.boor@gmail.com";
 
 function parseRecipients(value) {
   return String(value || "")
     .split(",")
     .map((email) => email.trim())
     .filter(Boolean);
+}
+
+function uniqueEmails(list) {
+  const seen = new Set();
+  return list.filter((email) => {
+    const key = email.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function escapeHtml(value) {
@@ -102,7 +111,70 @@ function buildLeadEmail({ name, email, typeLabel, message }) {
   };
 }
 
+function resolveRecipients(from) {
+  const cc = uniqueEmails(parseRecipients(process.env.CONTACT_CC));
+  const bcc = uniqueEmails(parseRecipients(process.env.CONTACT_BCC));
+  const usingTestSender = /@resend\.dev\b/i.test(from);
+
+  // Modo prueba Resend: solo al email de la cuenta (CONTACT_BCC).
+  if (usingTestSender) {
+    const to = bcc.length ? bcc : [FALLBACK_BCC];
+    return { to, cc: [], bcc: [] };
+  }
+
+  // Dominio verificado: Caro/Luis en CC, Carlos en CCO.
+  const to = cc.length ? [cc[0]] : bcc.length ? bcc : [FALLBACK_BCC];
+  return {
+    to,
+    cc: cc.filter((address) => address.toLowerCase() !== to[0].toLowerCase()),
+    bcc,
+  };
+}
+
+async function readJsonBody(req) {
+  if (req.body && typeof req.body === "object") return req.body;
+  if (typeof req.body === "string" && req.body.trim()) {
+    return JSON.parse(req.body);
+  }
+
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  const raw = Buffer.concat(chunks).toString("utf8");
+  if (!raw) return {};
+  return JSON.parse(raw);
+}
+
+async function sendWithResend({ apiKey, from, to, cc, bcc, replyTo, subject, html }) {
+  const payload = {
+    from,
+    to,
+    subject,
+    html,
+    reply_to: replyTo,
+  };
+  if (cc.length) payload.cc = cc;
+  if (bcc.length) payload.bcc = bcc;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = data?.message || data?.error || `Resend HTTP ${response.status}`;
+    throw new Error(message);
+  }
+  return data;
+}
+
 export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -110,16 +182,14 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: "RESEND_API_KEY no configurada" });
+    return res.status(500).json({ error: "RESEND_API_KEY no configurada en Vercel" });
   }
 
-  let body = req.body;
-  if (typeof body === "string") {
-    try {
-      body = JSON.parse(body);
-    } catch {
-      return res.status(400).json({ error: "JSON inválido" });
-    }
+  let body;
+  try {
+    body = await readJsonBody(req);
+  } catch {
+    return res.status(400).json({ error: "JSON inválido" });
   }
 
   const name = String(body?.name || "").trim().slice(0, MAX_NAME);
@@ -136,36 +206,26 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Campos inválidos" });
   }
 
-  const cc = parseRecipients(process.env.CONTACT_CC);
-  const bcc = parseRecipients(process.env.CONTACT_BCC);
-  if (!cc.length) {
-    return res.status(500).json({ error: "CONTACT_CC no configurada" });
-  }
-
   const from = process.env.RESEND_FROM || `${BRAND} <onboarding@resend.dev>`;
   const typeLabel = TYPE_LABELS[type] || type;
   const { subject, html } = buildLeadEmail({ name, email, typeLabel, message });
+  const { to, cc, bcc } = resolveRecipients(from);
 
   try {
-    const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
+    await sendWithResend({
+      apiKey,
       from,
-      to: [cc[0]],
+      to,
       cc,
-      ...(bcc.length ? { bcc } : {}),
+      bcc,
       replyTo: email,
       subject,
       html,
     });
-
-    if (error) {
-      console.error("Resend error:", error);
-      return res.status(502).json({ error: "No se pudo enviar el correo" });
-    }
-
     return res.status(200).json({ ok: true });
   } catch (error) {
     console.error("Contact API error:", error);
-    return res.status(500).json({ error: "Error interno al enviar" });
+    const detail = typeof error?.message === "string" ? error.message : "No se pudo enviar el correo";
+    return res.status(502).json({ error: detail });
   }
 }

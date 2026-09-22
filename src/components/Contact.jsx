@@ -121,11 +121,21 @@ export default function Contact() {
           "bot-field": fields["bot-field"],
         }),
       });
-      if (!res.ok) throw new Error(`Contact API respondió ${res.status}`);
+      if (!res.ok) {
+        let detail = `Contact API respondió ${res.status}`;
+        try {
+          const payload = await res.json();
+          if (payload?.error) detail = payload.error;
+        } catch {
+          /* noop */
+        }
+        throw new Error(detail);
+      }
       setStatus("ok");
       trackEvent("generate_lead", { method: "resend", project_type: fields.type });
       setFields(INITIAL);
-    } catch {
+    } catch (error) {
+      console.error("Contact form error:", error);
       setStatus("networkError");
       trackEvent("form_error", { reason: "network" });
     }
