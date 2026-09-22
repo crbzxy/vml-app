@@ -86,6 +86,7 @@ export default function Contact() {
   const [fields, setFields] = useState(INITIAL);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
+  const [openedAt] = useState(() => Date.now());
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -119,6 +120,7 @@ export default function Contact() {
           type: fields.type,
           message: fields.message.trim(),
           "bot-field": fields["bot-field"],
+          openedAt,
         }),
       });
       if (!res.ok) {

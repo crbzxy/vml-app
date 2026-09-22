@@ -11,9 +11,23 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Secrets & credentials — nunca subir al repo
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+id_rsa
+id_rsa.*
+credentials.json
+**/service-account*.json
+secrets/
+.vercel
+.netlify
 
 # Editor directories and files
 .vscode/*
