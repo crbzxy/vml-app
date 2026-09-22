@@ -129,15 +129,24 @@ ul { list-style: none; }
   position: fixed; top: 0; left: 0; z-index: 999;
   width: 12px; height: 12px; border-radius: 50%;
   background: var(--green); pointer-events: none;
+  border: 1.5px solid transparent;
+  box-sizing: border-box;
   transform: translate(-50%, -50%);
-  transition: width .3s var(--ease), height .3s var(--ease), background-color .3s var(--ease);
-  mix-blend-mode: difference; display: none;
+  transition:
+    width .3s var(--ease),
+    height .3s var(--ease),
+    background-color .3s var(--ease),
+    border-color .3s var(--ease);
+  mix-blend-mode: difference;
+  display: none;
 }
-/* Hover: círculo 25% más pequeño (78→58px), color de detalle #9F9FED.
-   Fusión normal para mostrar el morado real con buen contraste sobre los
-   elementos interactivos (oscuros o verdes). El punto base mantiene
-   mix-blend-mode: difference para ser visible mientras se desplaza. */
-.cursor.is-active { width: 58px; height: 58px; background: var(--purple); mix-blend-mode: normal; }
+/* Hover: anillo semitransparente — no tapa iconos ni texto debajo */
+.cursor.is-active {
+  width: 44px;
+  height: 44px;
+  background: color-mix(in srgb, var(--purple) 28%, transparent);
+  border-color: var(--purple);
+}
 @media (hover: hover) and (pointer: fine) { .cursor { display: block; } body.has-cursor * { cursor: none; } }
 
 /* ---------- NAV ---------- */
