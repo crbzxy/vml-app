@@ -91,8 +91,10 @@ Sitio nuevo o ya conectado al repo:
 - Redes sociales en `Contact.jsx`: Facebook, LinkedIn, Instagram y TikTok, con las URLs
   reales de la cuenta (el avance de diseño traía Instagram/Vimeo/LinkedIn como
   placeholder — Vimeo no existe en la marca real, se sustituyó por Facebook + TikTok).
-- Correo público mostrado en la sección de contacto: `info@vortexmedialab.mx` (el avance
-  traía `hola@vortexmedialab.mx` como placeholder).
+- Correos públicos mostrados en la sección de contacto: `carofernandez@vortexmedialab.mx`
+  y `luisfernandez@vortexmedialab.mx` (el avance traía `hola@vortexmedialab.mx` como
+  placeholder; `info@vortexmedialab.mx`, que aparece en el sitio actual en producción, no
+  se usa porque esa bandeja no está en uso).
 
 ## Pendientes de contenido (heredados del avance de diseño)
 

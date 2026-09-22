@@ -81,9 +81,14 @@ export default function Contact() {
             </span>
           </h2>
           <div className="contact__details reveal">
-            <a href="mailto:info@vortexmedialab.mx" className="contact__email" data-cursor="copy">
-              info@vortexmedialab.mx
-            </a>
+            <div className="contact__emails">
+              <a href="mailto:carofernandez@vortexmedialab.mx" className="contact__email" data-cursor="copy">
+                carofernandez@vortexmedialab.mx
+              </a>
+              <a href="mailto:luisfernandez@vortexmedialab.mx" className="contact__email" data-cursor="copy">
+                luisfernandez@vortexmedialab.mx
+              </a>
+            </div>
             <p className="contact__loc">{t("contact.loc")}</p>
             <div className="contact__socials">
               <a

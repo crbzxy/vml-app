@@ -387,6 +387,7 @@ ul { list-style: none; }
 .contact__inner { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(40px, 6vw, 80px); align-items: start; }
 .contact__title { font-family: var(--font-display); font-weight: 600; line-height: 1; letter-spacing: -.02em; font-size: clamp(2.4rem, 6.5vw, 5rem); margin: 12px 0 40px; }
 .contact__details { display: flex; flex-direction: column; gap: 14px; }
+.contact__emails { display: flex; flex-direction: column; gap: 10px; }
 .contact__email { font-family: var(--font-display); font-size: clamp(1.1rem, 3vw, 1.6rem); color: var(--ink); width: max-content; max-width: 100%; word-break: break-word; border-bottom: 1px solid var(--line); padding-bottom: 6px; transition: color .3s, border-color .3s; }
 .contact__email:hover { color: var(--green); border-color: var(--green); }
 .contact__loc { color: var(--ink-dim); font-size: .95rem; }
