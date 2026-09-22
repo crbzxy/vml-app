@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useI18n } from "../i18n/I18nContext";
+import { trackEvent } from "../analytics/trackEvent";
 
 const LINKS = [
-  { href: "#work", key: "nav.work" },
-  { href: "#services", key: "nav.services" },
-  { href: "#studio", key: "nav.studio" },
-  { href: "#contact", key: "nav.contact" },
+  { href: "#work", key: "nav.work", section: "work" },
+  { href: "#services", key: "nav.services", section: "services" },
+  { href: "#studio", key: "nav.studio", section: "studio" },
+  { href: "#contact", key: "nav.contact", section: "contact" },
 ];
 
 export default function Nav() {
@@ -17,6 +18,12 @@ export default function Nav() {
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+
+  const onLangToggle = () => {
+    const nextLang = lang === "es" ? "en" : "es";
+    trackEvent("lang_toggle", { lang: nextLang });
+    toggleLang();
+  };
 
   return (
     <>
@@ -33,7 +40,12 @@ export default function Nav() {
 
         <nav className="nav__links" aria-label="Navegación principal">
           {LINKS.map((l) => (
-            <a key={l.key} href={l.href} className="nav__link">
+            <a
+              key={l.key}
+              href={l.href}
+              className="nav__link"
+              onClick={() => trackEvent("nav_click", { section: l.section, location: "nav" })}
+            >
               {t(l.key)}
             </a>
           ))}
@@ -44,21 +56,26 @@ export default function Nav() {
             className="lang-toggle"
             id="langToggle"
             type="button"
-            aria-label="Cambiar idioma"
-            onClick={toggleLang}
+            aria-label={t("a11y.lang")}
+            onClick={onLangToggle}
           >
             <span className={`lang-toggle__opt${lang === "es" ? " is-active" : ""}`}>ES</span>
             <span className="lang-toggle__sep">/</span>
             <span className={`lang-toggle__opt${lang === "en" ? " is-active" : ""}`}>EN</span>
           </button>
-          <a href="#contact" className="btn btn--pill nav__cta" data-magnetic>
+          <a
+            href="#contact"
+            className="btn btn--pill nav__cta"
+            data-magnetic
+            onClick={() => trackEvent("cta_click", { location: "nav", label: "start_project" })}
+          >
             {t("nav.cta")}
           </a>
           <button
             className={`nav__burger${menuOpen ? " is-open" : ""}`}
             id="burger"
             type="button"
-            aria-label="Abrir menú"
+            aria-label={menuOpen ? t("a11y.menuClose") : t("a11y.menuOpen")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
@@ -70,11 +87,26 @@ export default function Nav() {
 
       <div className={`mobile-menu${menuOpen ? " is-open" : ""}`} id="mobileMenu" aria-hidden={!menuOpen}>
         {LINKS.map((l) => (
-          <a key={l.key} href={l.href} className="mobile-menu__link" onClick={closeMenu}>
+          <a
+            key={l.key}
+            href={l.href}
+            className="mobile-menu__link"
+            onClick={() => {
+              trackEvent("nav_click", { section: l.section, location: "mobile" });
+              closeMenu();
+            }}
+          >
             {t(l.key)}
           </a>
         ))}
-        <a href="#contact" className="btn btn--pill mobile-menu__cta" onClick={closeMenu}>
+        <a
+          href="#contact"
+          className="btn btn--pill mobile-menu__cta"
+          onClick={() => {
+            trackEvent("cta_click", { location: "mobile", label: "start_project" });
+            closeMenu();
+          }}
+        >
           {t("nav.cta")}
         </a>
       </div>

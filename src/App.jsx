@@ -12,10 +12,12 @@ import Clients from "./components/Clients";
 import Process from "./components/Process";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import { useI18n } from "./i18n/I18nContext";
 import { useReducedMotion, useIsTouch } from "./hooks/useMediaFlags";
 import { useVmlEffects } from "./hooks/useVmlEffects";
 
 export default function App() {
+  const { t } = useI18n();
   const reducedMotion = useReducedMotion();
   const isTouch = useIsTouch();
   const [heroRevealed, setHeroRevealed] = useState(false);
@@ -25,14 +27,14 @@ export default function App() {
   return (
     <>
       <a href="#hero" className="skip-link">
-        Saltar al contenido
+        {t("a11y.skip")}
       </a>
 
       <div className="atmosphere" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
 
       <Preloader reducedMotion={reducedMotion} onDone={() => setHeroRevealed(true)} />
-      <Cursor />
+      {!isTouch && <Cursor />}
       <Nav />
 
       <main>

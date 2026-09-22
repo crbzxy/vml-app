@@ -128,11 +128,10 @@ export const dictionary = {
     "footer.tag": "Creatividad que mueve marcas. Hecho en CDMX.",
     "footer.top": "Volver arriba ↑",
 
-    "cursor.view": "Ver",
-    "cursor.more": "Más",
-    "cursor.copy": "Copiar",
-    "cursor.link": "Abrir",
     "a11y.skip": "Saltar al contenido",
+    "a11y.lang": "Cambiar idioma",
+    "a11y.menuOpen": "Abrir menú",
+    "a11y.menuClose": "Cerrar menú",
   },
 
   en: {
@@ -257,10 +256,9 @@ export const dictionary = {
     "footer.tag": "Creativity that moves brands. Made in CDMX.",
     "footer.top": "Back to top ↑",
 
-    "cursor.view": "View",
-    "cursor.more": "More",
-    "cursor.copy": "Copy",
-    "cursor.link": "Open",
     "a11y.skip": "Skip to content",
+    "a11y.lang": "Switch language",
+    "a11y.menuOpen": "Open menu",
+    "a11y.menuClose": "Close menu",
   },
 };

@@ -22,10 +22,10 @@ export function useVmlEffects({ reducedMotion, isTouch }) {
 
   // Reveal on scroll (.reveal, .section-label, .contact__title)
   useEffect(() => {
-    const els = $$(".reveal, .section-label, .contact__title");
+    const revealEls = $$(".reveal");
     const labelEls = $$(".section-label, .contact__title");
     if (reducedMotion || !("IntersectionObserver" in window)) {
-      els.forEach((el) => el.classList.add("is-in"));
+      revealEls.forEach((el) => el.classList.add("is-in"));
       labelEls.forEach((el) => el.classList.add("is-revealed"));
       return;
     }
@@ -45,7 +45,7 @@ export function useVmlEffects({ reducedMotion, isTouch }) {
       },
       { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
     );
-    [...els, ...labelEls].forEach((el) => io.observe(el));
+    [...revealEls, ...labelEls].forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [reducedMotion]);
 
@@ -120,19 +120,31 @@ export function useVmlEffects({ reducedMotion, isTouch }) {
     let y = window.innerHeight / 2;
     let cx = x;
     let cy = y;
-    let raf;
-    const onMove = (e) => {
-      x = e.clientX;
-      y = e.clientY;
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
+    let raf = 0;
+    let running = false;
+
     const render = () => {
       cx += (x - cx) * 0.2;
       cy += (y - cy) * 0.2;
       cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+      const settled = Math.abs(x - cx) < 0.1 && Math.abs(y - cy) < 0.1;
+      if (settled) {
+        running = false;
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(render);
     };
-    render();
+
+    const onMove = (e) => {
+      x = e.clientX;
+      y = e.clientY;
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(render);
+      }
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
 
     const targets = $$("[data-cursor]");
     const onEnter = () => cursor.classList.add("is-active");
@@ -151,7 +163,7 @@ export function useVmlEffects({ reducedMotion, isTouch }) {
     window.addEventListener("mouseover", onWindowOver);
 
     return () => {
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseout", onWindowOut);
       window.removeEventListener("mouseover", onWindowOver);

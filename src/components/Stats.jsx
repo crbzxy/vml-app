@@ -14,10 +14,12 @@ export default function Stats() {
       <div className="container stats__grid">
         {STATS.map((s) => (
           <div className="stat reveal" key={s.key}>
-            <span className="stat__num" data-count={s.count}>
-              0
-            </span>
-            {s.plus && <span className="stat__plus">+</span>}
+            <div className="stat__value">
+              <span className="stat__num" data-count={s.count}>
+                0
+              </span>
+              {s.plus && <span className="stat__plus">+</span>}
+            </div>
             <p className="stat__label">{t(s.key)}</p>
           </div>
         ))}

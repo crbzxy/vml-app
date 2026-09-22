@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "../i18n/I18nContext";
+import { trackEvent } from "../analytics/trackEvent";
 import VortexMark from "./icons/VortexMark";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -12,11 +13,85 @@ function encodeForNetlify(data) {
 
 const INITIAL = { name: "", email: "", type: "design", message: "", "bot-field": "" };
 
+const SOCIALS = [
+  {
+    network: "facebook",
+    href: "https://www.facebook.com/vortexmedialabmx/",
+    label: "Facebook",
+    path: (
+      <>
+        <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <path
+          d="M13.5 21v-6.7h2.2l.3-2.6h-2.5V9.9c0-.75.2-1.27 1.29-1.27h1.38V6.3c-.24-.03-1.05-.1-2-.1-1.98 0-3.33 1.2-3.33 3.42v1.9H8.5v2.6h2.3V21"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </>
+    ),
+  },
+  {
+    network: "linkedin",
+    href: "https://www.linkedin.com/company/vortex-media-lab/",
+    label: "LinkedIn",
+    path: (
+      <>
+        <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <path
+          d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </>
+    ),
+  },
+  {
+    network: "instagram",
+    href: "https://www.instagram.com/vortexmedialab/",
+    label: "Instagram",
+    path: (
+      <>
+        <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="17.5" cy="6.5" r="1.3" fill="currentColor" />
+      </>
+    ),
+  },
+  {
+    network: "tiktok",
+    href: "https://www.tiktok.com/@vortexmedialab",
+    label: "TikTok",
+    path: (
+      <>
+        <path
+          d="M14 3v10.6a2.9 2.9 0 11-2.4-2.86"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M14 3c.3 2.1 1.8 3.7 4 4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </>
+    ),
+  },
+];
+
 export default function Contact() {
   const { t } = useI18n();
   const [fields, setFields] = useState(INITIAL);
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState("idle"); // idle | sending | ok | invalid | networkError
+  const [status, setStatus] = useState("idle");
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +110,7 @@ export default function Contact() {
     setErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean)) {
       setStatus("invalid");
+      trackEvent("form_error", { reason: "validation" });
       return;
     }
 
@@ -47,9 +123,11 @@ export default function Contact() {
       });
       if (!res.ok) throw new Error(`Netlify Forms respondió ${res.status}`);
       setStatus("ok");
+      trackEvent("generate_lead", { method: "netlify_forms", project_type: fields.type });
       setFields(INITIAL);
     } catch {
       setStatus("networkError");
+      trackEvent("form_error", { reason: "network" });
     }
   };
 
@@ -57,12 +135,12 @@ export default function Contact() {
     status === "sending"
       ? t("form.sending")
       : status === "ok"
-      ? t("form.ok")
-      : status === "invalid"
-      ? t("form.err")
-      : status === "networkError"
-      ? t("form.errNetwork")
-      : "";
+        ? t("form.ok")
+        : status === "invalid"
+          ? t("form.err")
+          : status === "networkError"
+            ? t("form.errNetwork")
+            : "";
 
   return (
     <section className="contact" id="contact">
@@ -74,98 +152,48 @@ export default function Contact() {
           </p>
           <h2 className="contact__title">
             <span className="line">
-              <span className="line__inner">{t("contact.t1")}</span>
-            </span>
-            <span className="line">
-              <span className="line__inner line__inner--accent">{t("contact.t2")}</span>
+              <span className="line__inner">
+                {t("contact.t1")}{" "}
+                <span className="line__inner--accent">{t("contact.t2")}</span>
+              </span>
             </span>
           </h2>
           <div className="contact__details reveal">
             <div className="contact__emails">
-              <a href="mailto:carofernandez@vortexmedialab.mx" className="contact__email" data-cursor="copy">
+              <a
+                href="mailto:carofernandez@vortexmedialab.mx"
+                className="contact__email"
+                data-cursor="copy"
+                onClick={() => trackEvent("mailto_click", { email: "carofernandez@vortexmedialab.mx" })}
+              >
                 carofernandez@vortexmedialab.mx
               </a>
-              <a href="mailto:luisfernandez@vortexmedialab.mx" className="contact__email" data-cursor="copy">
+              <a
+                href="mailto:luisfernandez@vortexmedialab.mx"
+                className="contact__email"
+                data-cursor="copy"
+                onClick={() => trackEvent("mailto_click", { email: "luisfernandez@vortexmedialab.mx" })}
+              >
                 luisfernandez@vortexmedialab.mx
               </a>
             </div>
             <p className="contact__loc">{t("contact.loc")}</p>
             <div className="contact__socials">
-              <a
-                href="https://www.facebook.com/vortexmedialabmx/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                data-cursor="link"
-              >
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <path
-                    d="M13.5 21v-6.7h2.2l.3-2.6h-2.5V9.9c0-.75.2-1.27 1.29-1.27h1.38V6.3c-.24-.03-1.05-.1-2-.1-1.98 0-3.33 1.2-3.33 3.42v1.9H8.5v2.6h2.3V21"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/vortex-media-lab/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                data-cursor="link"
-              >
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <path
-                    d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </a>
-              <a
-                href="https://www.instagram.com/vortexmedialab/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                data-cursor="link"
-              >
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <circle cx="17.5" cy="6.5" r="1.3" fill="currentColor" />
-                </svg>
-              </a>
-              <a
-                href="https://www.tiktok.com/@vortexmedialab"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok"
-                data-cursor="link"
-              >
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                  <path
-                    d="M14 3v10.6a2.9 2.9 0 11-2.4-2.86"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M14 3c.3 2.1 1.8 3.7 4 4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </a>
+              {SOCIALS.map((social) => (
+                <a
+                  key={social.network}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  data-cursor="link"
+                  onClick={() => trackEvent("social_click", { network: social.network })}
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    {social.path}
+                  </svg>
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -196,6 +224,7 @@ export default function Contact() {
               value={fields.name}
               onChange={onChange}
               className={errors.name ? "is-error" : undefined}
+              aria-invalid={errors.name ? true : undefined}
             />
           </div>
           <div className="field">
@@ -208,6 +237,7 @@ export default function Contact() {
               value={fields.email}
               onChange={onChange}
               className={errors.email ? "is-error" : undefined}
+              aria-invalid={errors.email ? true : undefined}
             />
           </div>
           <div className="field">
@@ -228,6 +258,7 @@ export default function Contact() {
               value={fields.message}
               onChange={onChange}
               className={errors.message ? "is-error" : undefined}
+              aria-invalid={errors.message ? true : undefined}
             />
           </div>
           <button type="submit" className="btn btn--solid btn--full" disabled={status === "sending"}>

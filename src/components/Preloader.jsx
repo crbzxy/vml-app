@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import VortexMark from "./icons/VortexMark";
 
+const SESSION_KEY = "vml-preloader-seen";
+
 /**
- * Barra de progreso simulada + retiro del preloader. Al terminar agrega
- * `is-revealed` al <section class="hero"> para disparar la animación de
- * las líneas del título (ver .line__inner en styles.css).
+ * Preloader corto amarrado a fonts.ready. En visitas repetidas de la misma
+ * sesión se omite. Dispara onDone para revelar el título del hero.
  */
 export default function Preloader({ reducedMotion, onDone }) {
   const [progress, setProgress] = useState(0);
@@ -15,41 +16,59 @@ export default function Preloader({ reducedMotion, onDone }) {
   const finish = () => {
     if (finishedRef.current) return;
     finishedRef.current = true;
+    setProgress(100);
     setIsDone(true);
     document.body.classList.add("is-loaded");
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {
+      /* noop */
+    }
     requestAnimationFrame(() => onDone?.());
-    setTimeout(() => setIsHidden(true), 1100);
+    setTimeout(() => setIsHidden(true), 700);
   };
 
   useEffect(() => {
-    if (reducedMotion) {
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem(SESSION_KEY) === "1";
+    } catch {
+      /* noop */
+    }
+
+    if (seen || reducedMotion) {
       setProgress(100);
-      const t = setTimeout(finish, 250);
+      const t = setTimeout(finish, seen ? 0 : 200);
       return () => clearTimeout(t);
     }
+
+    let cancelled = false;
     let p = 0;
     const tick = setInterval(() => {
-      p += Math.random() * 14 + 4;
-      if (p >= 100) {
-        p = 100;
-        clearInterval(tick);
-        setTimeout(finish, 350);
-      }
-      setProgress(p);
-    }, 110);
-    return () => clearInterval(tick);
+      p = Math.min(p + 18 + Math.random() * 12, 92);
+      if (!cancelled) setProgress(p);
+    }, 80);
+
+    const ready = typeof document.fonts?.ready?.then === "function" ? document.fonts.ready : Promise.resolve();
+
+    const maxWait = setTimeout(() => {
+      if (!cancelled) finish();
+    }, 1200);
+
+    ready.then(() => {
+      if (cancelled || finishedRef.current) return;
+      clearInterval(tick);
+      setProgress(100);
+      setTimeout(finish, 120);
+    });
+
+    return () => {
+      cancelled = true;
+      clearInterval(tick);
+      clearTimeout(maxWait);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
-
-  // Failsafe: nunca dejar la pantalla cubierta si algo falla.
-  useEffect(() => {
-    const t = setTimeout(() => {
-      if (!finishedRef.current) finish();
-      setIsHidden(true);
-    }, 3000);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   if (isHidden) return null;
 

@@ -39,7 +39,14 @@ export default function Clients() {
         <div className="clients__track" id="clientsTrack">
           {doubled.map((name, i) => (
             <span className="client" key={`${name}-${i}`}>
-              <img src={`/assets/img/clients/${encodeURIComponent(name)}.png`} alt={name} />
+              <img
+                src={`/assets/img/clients/${encodeURIComponent(name)}.png`}
+                alt={name}
+                loading="lazy"
+                decoding="async"
+                width="150"
+                height="42"
+              />
             </span>
           ))}
         </div>

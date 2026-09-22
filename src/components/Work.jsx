@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "../i18n/I18nContext";
+import { trackEvent } from "../analytics/trackEvent";
 
 /* Para activar/ampliar un carrusel: sube las imágenes a public/assets/img/
    y añade sus nombres (con extensión) a la lista del proyecto. Lista vacía
@@ -21,18 +22,23 @@ const FILTERS = [
 ];
 
 const TILES = [
-  { id: "p1", cat: "av", size: "lg", img: "work-01.jpg", reel: "aurora" },
-  { id: "p2", cat: "design", img: "work-02.jpg", reel: "identidad" },
-  { id: "p3", cat: "event", img: "work-03.jpg", reel: "pulso" },
-  { id: "p4", cat: "design", img: "work-04.jpg", reel: "salvora" },
-  { id: "p5", cat: "event", size: "lg", img: "work-05.jpg", reel: "vertigo" },
-  { id: "p6", cat: "av", img: "work-06.jpg", reel: "cobalto" },
+  { id: "p1", cat: "av", size: "lg", img: "work-01.webp", reel: "aurora" },
+  { id: "p2", cat: "design", img: "work-02.webp", reel: "identidad" },
+  { id: "p3", cat: "event", img: "work-03.webp", reel: "pulso" },
+  { id: "p4", cat: "design", img: "work-04.webp", reel: "salvora" },
+  { id: "p5", cat: "event", size: "lg", img: "work-05.webp", reel: "vertigo" },
+  { id: "p6", cat: "av", img: "work-06.webp", reel: "cobalto" },
 ];
 
 function Tile({ tile, t, hidden }) {
+  const [reelReady, setReelReady] = useState(false);
   const reelImgs = REELS[tile.reel] || [];
   const hasReel = reelImgs.length > 0;
-  const doubled = hasReel ? [...reelImgs, ...reelImgs] : [];
+  const loopImgs = hasReel && reelReady ? [...reelImgs, ...reelImgs] : [];
+
+  const armReel = () => {
+    if (hasReel) setReelReady(true);
+  };
 
   return (
     <a
@@ -43,13 +49,22 @@ function Tile({ tile, t, hidden }) {
       data-cat={tile.cat}
       data-cursor="view"
       style={{ "--img": `url('/assets/img/${tile.img}')` }}
+      onMouseEnter={armReel}
+      onFocus={armReel}
+      onClick={() => trackEvent("work_tile_click", { project_id: tile.id })}
     >
       <div className="tile__img" />
-      {hasReel && (
+      {hasReel && reelReady && (
         <div className="tile__reel" aria-hidden="true">
           <div className="tile__reel-track">
-            {doubled.map((src, i) => (
-              <img key={`${src}-${i}`} src={`/assets/img/${src}`} alt="" />
+            {loopImgs.map((src, i) => (
+              <img
+                key={`${src}-${i}`}
+                src={`/assets/img/${src}`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
             ))}
           </div>
         </div>
@@ -83,7 +98,10 @@ export default function Work() {
               key={f.id}
               type="button"
               className={`filter${filter === f.id ? " is-active" : ""}`}
-              onClick={() => setFilter(f.id)}
+              onClick={() => {
+                setFilter(f.id);
+                trackEvent("work_filter", { filter: f.id });
+              }}
             >
               {t(f.key)}
             </button>
