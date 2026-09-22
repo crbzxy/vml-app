@@ -1,70 +1,53 @@
-import React, { useEffect } from 'react';
-import './styles/App.scss';
+import { useState } from "react";
+import Preloader from "./components/Preloader";
+import Cursor from "./components/Cursor";
+import Nav from "./components/Nav";
+import Hero from "./components/Hero";
+import Marquee from "./components/Marquee";
+import Studio from "./components/Studio";
+import Services from "./components/Services";
+import Work from "./components/Work";
+import Stats from "./components/Stats";
+import Clients from "./components/Clients";
+import Process from "./components/Process";
+import Contact from "./components/Contact";
+import Footer from "./components/Footer";
+import { useReducedMotion, useIsTouch } from "./hooks/useMediaFlags";
+import { useVmlEffects } from "./hooks/useVmlEffects";
 
-import Carrousel from './components/Carrousel';
-import Navbar from './components/Navbar';
-import AboutUs from './components/AboutUs';
-import Partners from './components/Partners';
-import WeAre from './components/WeAre';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { Element, Events, scrollSpy } from 'react-scroll';
-import Services from './components/Services';
-import WeWould from './components/WeWould';
-import Footer from './components/Footer';
+export default function App() {
+  const reducedMotion = useReducedMotion();
+  const isTouch = useIsTouch();
+  const [heroRevealed, setHeroRevealed] = useState(false);
 
-function App() {
-  useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: true,
-      disable: function() {
-        const maxWidth = 800;
-        return window.innerWidth < maxWidth;
-      },
-    });
-
-    scrollSpy.update();
-
-    // Removemos eventos registrados al desmontar el componente
-    return () => {
-      Events.scrollEvent.remove('begin');
-      Events.scrollEvent.remove('end');
-    };
-  }, []);
+  useVmlEffects({ reducedMotion, isTouch });
 
   return (
-    <div className="App scroll-container">
-      <Navbar />
+    <>
+      <a href="#hero" className="skip-link">
+        Saltar al contenido
+      </a>
 
-      <Element name="carrousel" className="snap-section">
-        <Carrousel data-aos="fade-up" />
-      </Element>
+      <div className="atmosphere" aria-hidden="true" />
+      <div className="grain" aria-hidden="true" />
 
+      <Preloader reducedMotion={reducedMotion} onDone={() => setHeroRevealed(true)} />
+      <Cursor />
+      <Nav />
 
-      <Element name="aboutUs" className="snap-section">
-        <AboutUs data-aos="fade-up" data-aos-delay="200" />
-      </Element>
+      <main>
+        <Hero revealed={heroRevealed} />
+        <Marquee />
+        <Studio />
+        <Services />
+        <Work />
+        <Stats />
+        <Clients />
+        <Process />
+        <Contact />
+      </main>
 
-      <Element name="weAre" className="snap-section">
-        <WeAre data-aos="fade-up" data-aos-delay="400" />
-      </Element>
-      <Element name="services" className="snap-section">
-        <Services data-aos="fade-up" data-aos-delay="600" />
-      </Element>
-      <Element name="Partners" className="snap-section">
-        <Partners data-aos="fade-up" data-aos-delay="600" />
-      </Element>
-      <Element name="weWould" className="snap-section">
-        <WeWould data-aos="fade-up" data-aos-delay="600" />
-      </Element>
-      <Element name="weWould" className="snap-section">
-        <Footer data-aos="fade-up" data-aos-delay="600" />
-      </Element>
-  
-      
-    </div>
+      <Footer />
+    </>
   );
 }
-
-export default App;

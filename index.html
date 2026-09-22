@@ -1,12 +1,51 @@
-<!DOCTYPE html>
-<html lang="es-mx">
+<!doctype html>
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vortex Media Lab</title>
+    <meta name="theme-color" content="#031F35" />
+
+    <title>Vortex Media Lab — Diseño · Audiovisual · Eventos | CDMX</title>
+    <meta
+      name="description"
+      content="Vortex Media Lab es una agencia de creatividad en Ciudad de México. Diseño, producción audiovisual y experiencias de marca que mueven personas."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Vortex Media Lab — Agencia de creatividad en CDMX" />
+    <meta property="og:description" content="Diseño · Audiovisual · Eventos. Creatividad que mueve marcas." />
+    <meta property="og:image" content="/assets/img/og-cover.jpg" />
+    <meta property="og:locale" content="es_MX" />
+
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
+  <body data-lang="es">
+    <!--
+      Réplica estática del formulario de contacto, solo para que Netlify la
+      detecte en el build (dist/index.html) y habilite Netlify Forms.
+      El formulario real que ve el visitante lo renderiza React en
+      src/components/Contact.jsx y se envía por fetch a "/" con estos
+      mismos campos. No borrar: si se quita, Netlify deja de recibir envíos.
+    -->
+    <form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <select name="type">
+        <option value="design">Diseño / Branding</option>
+        <option value="av">Producción audiovisual</option>
+        <option value="event">Evento / Activación</option>
+        <option value="other">Otro / No estoy seguro</option>
+      </select>
+      <textarea name="message"></textarea>
+      <input type="text" name="bot-field" />
+    </form>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
